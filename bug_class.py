@@ -15,12 +15,13 @@ class Bug:
 
 	def start(self):
 		self.begin = True
+		self.thread = threading.Thread(target = self.walk)
+		self.thread.start()
 	def stop(self):
 		self.begin = False
 		self.__shifter.shiftByte(0b00000000)
-
 	def walk(self):
-		if self.begin == True:
+		while self.begin:
 			pattern = 1 << self.x
 			self.__shifter.shiftByte(pattern)
 
