@@ -27,6 +27,7 @@ try:
 		if GPIO.input(s3) == 1:
 			bug.timestep = bug.timestep/3
 
+		time.sleep(0.01)
 except KeyboardInterrupt:
 	GPIO.cleanup()
 
