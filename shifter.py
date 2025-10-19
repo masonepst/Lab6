@@ -8,9 +8,9 @@ class Shifter:
 		self.clockPin = clock
 		self.latchPin = latch
 		GPIO.setmode(GPIO.BCM)
-		GPIO.setup(serial, GPIO.OUT)
-		GPIO.setup(clock, GPIO.OUT, initial=0) 
-		GPIO.setup(latch, GPIO.OUT, initial=0)
+		GPIO.setup(self.serialPin, GPIO.OUT)
+		GPIO.setup(self.clockPin, GPIO.OUT, initial=0) 
+		GPIO.setup(self.latchPin, GPIO.OUT, initial=0)
 
 	def ping(self, pin):
 		GPIO.output(pin, 1) 
@@ -26,9 +26,4 @@ class Shifter:
 
 		GPIO.output(self.latchPin, 1)
 		time.sleep(0)
-		GPIO.OUTPUT(self.latchPin, 0)
-
-	try:
-		while 1: pass
-	except:
-		GPIO.cleanup()
+		GPIO.output(self.latchPin, 0)

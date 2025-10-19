@@ -5,23 +5,23 @@ import RPi.GPIO as GPIO
 
 test = Shifter(serial = 23, clock = 25, latch = 24)
 
-led = 0
-
+x = 0
+timestep = 0.05
 try:
 	while True:
-		pattern = 1 << led
+		pattern = 1 << x
 		test.shiftByte(pattern)
 
 		walk = random.choice([-1,1])
-		led += walk
+		x += walk
 
-		if led < 0:
-			led = 0
-		elif led > 7:
-			led = 7
+		if x < 0:
+			x = 0
+		elif x > 7:
+			x = 7
 
 
-	time.slee(0.05)
+	time.sleep(timestep)
 
 except KeyboardInterrupt:
 	GPIO.cleanup()
