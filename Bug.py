@@ -1,5 +1,6 @@
 from bug_class import Bug
 import RPi.GPIO as GPIO
+import time
 
 s1 = 5
 s2 = 6
