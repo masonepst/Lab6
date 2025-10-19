@@ -13,8 +13,14 @@ class Bug:
 		self.x = x
 		self.begin = False
 
+	def start(self):
+		self.begin = True
+	def stop(self):
+		self.begin = False
+		self.__shifter.shiftByte(0b00000000)
+
 	def walk(self):
-		while self.begin:
+		if self.begin == True:
 			pattern = 1 << self.x
 			self.__shifter.shiftByte(pattern)
 
@@ -32,10 +38,3 @@ class Bug:
 				elif self.x<0:
 					self.x = 0
 			time.sleep(self.timestep)
-	def start(self):
-		self.begin = True
-		self.thread = threading.Thread(target = self.walk)
-		self.thread.start()
-	def stop(self):
-		self.begin = False
-		self.__shifter.shiftByte(0b00000000)
