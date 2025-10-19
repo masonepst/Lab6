@@ -12,6 +12,7 @@ GPIO.setup(s3, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
 
 bug = Bug()
 s2_last = GPIO.input(s2)
+s3_last = GPIO.input(s3)
 try:
 	while True:
 		if GPIO.input(s1) == 1:
@@ -25,7 +26,7 @@ try:
 			else:
 				bug.isWrapOn = True
 
-		if GPIO.input(s3) == 1:
+		if GPIO.input(s3) == 1 and s3_last != 1:
 			bug.timestep = bug.timestep/3
 
 		time.sleep(0.01)
