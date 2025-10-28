@@ -21,7 +21,7 @@ def parsePOSTdata(data):
 while True:
 
 	conn, addr = s.accept()
-	request = conn.recv(1024),decode()
+	request = conn.recv(1024).decode()
 	data = parsePOSTdata(request)
 	s1 = data['led1']
 	s2 = data['led2']
