@@ -21,13 +21,15 @@ def parsePOSTdata(data):
 while True:
 
 	conn, addr = s.accept()
-	#request = conn.recv(1024).decode()
+	request = conn.recv(1024).decode()
+	method = request.split(' ')[0]
+	if method == 'POST':
 	data = parsePOSTdata(conn.recv(1024))
-	s1 = data['led1']
-	s2 = data['led2']
-	s3 = data['led3']
+		s1 = data['led1']
+		s2 = data['led2']
+		s3 = data['led3']
 
-	led = [s1, s2, s3]
+		led = [s1, s2, s3]
 
 	html = f"""<!DOCTYPE html>
 <html>
