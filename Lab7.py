@@ -22,7 +22,9 @@ while True:
 
 	conn, addr = s.accept()
 	request = conn.recv(1024).decode()
+
 	method = request.split(' ')[0]
+
 	if method == 'POST':
 		data = parsePOSTdata(conn.recv(1024))
 		s1 = data['led1']
@@ -34,14 +36,13 @@ while True:
 	html = f"""<!DOCTYPE html>
 <html>
 <body>
-  <h2>LED Brightness Control</h2>
+  <h2>Brightness level:</h2>
   <form method="POST">
-    <label>LED 1:</label>
-    <input type="range" name="led1" min="0" max="100" value="{led[0]}"><br>
-    <label>LED 2:</label>
-    <input type="range" name="led2" min="0" max="100" value="{led[1]}"><br>
-    <label>LED 3:</label>
-    <input type="range" name="led3" min="0" max="100" value="{led[2]}"><br><br>
+    <input type="range" name="brightness" min="0" max="100" value="{led[selected_led]}"><br><br>
+    <b>Select LED:</b><br>
+    <input type="radio" name="led" value="0" {'checked' if selected_led == 0 else ''}> LED 1 ({led[0]}%)<br>
+    <input type="radio" name="led" value="1" {'checked' if selected_led == 1 else ''}> LED 2 ({led[1]}%)<br>
+    <input type="radio" name="led" value="2" {'checked' if selected_led == 2 else ''}> LED 3 ({led[2]}%)<br><br>
     <input type="submit" value="Change Brightness">
   </form>
 </body>
