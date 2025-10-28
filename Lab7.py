@@ -21,8 +21,8 @@ def parsePOSTdata(data):
 while True:
 
 	conn, addr = s.accept()
-
-	data = parsePOSTdata(conn.recv[1024])
+	request = conn.recv[1024],decode()
+	data = parsePOSTdata(request)
 	s1 = data['led1']
 	s2 = data['led2']
 	s3 = data['led3']
@@ -45,11 +45,10 @@ while True:
 </body>
 </html>"""
 
-	# status line:
 	conn.send(b"HTTP/1.1 200 OK\r\n")
-	# headers:
-	conn.send(b"Content-type: text/html\r\n\r\n")
-	conn.send(b'Connection: close\r\n\r\n') # tell client to close
+	conn.send(b"Content-Type: text/html\r\n")
+	conn.send(b"Connection: close\r\n\r\n")
+
 	# body:
 	conn.sendall(html.encode()) #Change to LED stuff
 	conn.close()
