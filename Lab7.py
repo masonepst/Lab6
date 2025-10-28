@@ -2,10 +2,10 @@ import socket
 
 
 led = [0,0,0]
-addr = socket.getaddrinfo('', 80)[-1][-1][0]
+
 s = socket.socket()
 
-s.bind(addr, 80)
+s.bind(('127.0.0.1', 80))
 s.listen(1)
 def parsePOSTdata(data):
 	data_dict = {}
