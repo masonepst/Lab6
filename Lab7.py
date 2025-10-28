@@ -5,7 +5,7 @@ led = [0,0,0]
 
 s = socket.socket()
 
-s.bind(('127.0.0.1', 80))
+s.bind(('0.0.0.0', 80))
 s.listen(1)
 def parsePOSTdata(data):
 	data_dict = {}
