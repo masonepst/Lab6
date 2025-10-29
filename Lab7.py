@@ -2,12 +2,14 @@ import socket
 
 
 led = [0,0,0]
+select = 0
 
 s = socket.socket()
-select = 0
+
 
 s.bind(('0.0.0.0', 80))
 s.listen(1)
+
 def parsePOSTdata(data):
 	data_dict = {}
 	idx = data.find('\r\n\r\n')+4
@@ -27,7 +29,7 @@ while True:
 	method = request.split(' ')[0]
 
 	if method == 'POST':
-		data = parsePOSTdata(conn.recv(1024))
+		data = parsePOSTdata(request)
 		s1 = data['led1']
 		s2 = data['led2']
 		s3 = data['led3']
@@ -39,7 +41,7 @@ while True:
 <body>
   <h2>Brightness level:</h2>
   <form method="POST">
-    <input type="range" name="brightness" min="0" max="100" value="{led[selected_led]}"><br><br>
+    <input type="range" name="brightness" min="0" max="100" value="{led[select]}"><br><br>
     <b>Select LED:</b><br>
     <input type="radio" name="led" value="0" {'checked' if select == 0 else ''}> LED 1 ({led[0]}%)<br>
     <input type="radio" name="led" value="1" {'checked' if select == 1 else ''}> LED 2 ({led[1]}%)<br>
@@ -49,10 +51,8 @@ while True:
 </body>
 </html>"""
 
-	conn.send(b"HTTP/1.1 200 OK\r\n")
-	conn.send(b"Content-Type: text/html\r\n")
-	conn.send(b"Connection: close\r\n\r\n")
-
-	# body:
-	conn.sendall(html.encode()) #Change to LED stuff
-	conn.close()
+  conn.send(b"HTTP/1.1 200 OK\r\n")
+  conn.send(b"Content-Type: text/html\r\n")
+  conn.send(b"Connection: close\r\n\r\n")
+  conn.sendall(html.encode())
+  conn.close()
