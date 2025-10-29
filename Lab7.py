@@ -1,6 +1,6 @@
 import socket
 import RPi.GPIO as GPIO
-
+GPIO.cleanup()
 GPIO.setmode(GPIO.BCM)
 pins = [23,24,25]
 
