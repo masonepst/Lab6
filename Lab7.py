@@ -53,9 +53,9 @@ try:
 	  <form method="POST">
 	    <input type="range" name="brightness" min="0" max="100" value="{led[number]}"><br><br>
 	    <b>Select LED:</b><br>
-	    <input type="radio" name="led" value="0" {'checked' if number == 0 else ''}> LED 1 ({led[0]}%)<br>
-	    <input type="radio" name="led" value="1" {'checked' if number == 1 else ''}> LED 2 ({led[1]}%)<br>
-	    <input type="radio" name="led" value="2" {'checked' if number == 2 else ''}> LED 3 ({led[2]}%)<br><br>
+	    <input type="radio" name="led" value="0" 'checked> LED 1 ({led[0]}%)<br>
+	    <input type="radio" name="led" value="1" > LED 2 ({led[1]}%)<br>
+	    <input type="radio" name="led" value="2" > LED 3 ({led[2]}%)<br><br>
 	    <input type="submit" value="Change Brightness">
 	  </form>
 	</body>
@@ -68,9 +68,9 @@ try:
 		conn.close()
 
 except KeyboardInterrupt:
-	for pwm in pwms:
-		pwm.stop()
-	GPIO.cleanup()
+	for i in range(len(LED_pwm)):
+		pwms[i].stop()
+		GPIO.cleanup()
 
 
 
