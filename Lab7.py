@@ -38,7 +38,7 @@ try:
 
 		conn, addr = s.accept()
 
-		data = parsePOSTdata(conn.recv(1024).decode())
+		data = parsePOSTdata(conn.recv(1024))
 
 		if 'led' in data and 'brightness' in data:
 			number = int(data['led'])
@@ -64,7 +64,7 @@ try:
 		conn.send(b"HTTP/1.1 200 OK\r\n")
 		conn.send(b"Content-Type: text/html\r\n")
 		conn.send(b"Connection: close\r\n\r\n")
-		conn.sendall(html)
+		conn.sendall(html.encode())
 		conn.close()
 
 except KeyboardInterrupt:
