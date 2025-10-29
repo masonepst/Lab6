@@ -34,7 +34,6 @@ while True:
 			select = int(data['led'])
 			led[select] = int(data['brightness'])
 
-		led = [s1, s2, s3]
 
 	html = f"""<!DOCTYPE html>
 <html>
