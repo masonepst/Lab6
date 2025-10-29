@@ -7,7 +7,7 @@ select = 0
 s = socket.socket()
 
 
-s.bind(('0.0.0.0', 80))
+s.bind(('0.0.0.0', 8080))
 s.listen(1)
 
 def parsePOSTdata(data):
