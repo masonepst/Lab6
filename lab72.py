@@ -129,7 +129,7 @@ try:
 		conn.close()
 
 except KeyboardInterrupt:
-	for i in range(len(LED_pwm)):
+	for i in range(len(pwms)):
 		pwms[i].stop()
 		GPIO.cleanup()
 
