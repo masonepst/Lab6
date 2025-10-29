@@ -38,7 +38,7 @@ try:
 
 		conn, addr = s.accept()
 
-		data = parsePOSTdata(conn.recv(1024))
+		data = parsePOSTdata(conn.recv(1024).decode())
 
 		if 'led' in data and 'brightness' in data:
 			number = int(data['led'])
