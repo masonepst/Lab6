@@ -44,7 +44,7 @@ try:
 		if 'led' in data and 'brightness' in data:
 			number = int(data['led'])
 			led[number] = int(data['brightness'])
-			bright[number].ChangeDutyCycle(led[select])
+			bright[number].ChangeDutyCycle(led[number])
 
 
 		html = f"""<!DOCTYPE html>
