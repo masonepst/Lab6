@@ -7,13 +7,13 @@ pins = [5,6,26]
 
 led = [0,0,0]
 number = 0
-bright = []
+pwms = []
 
-for pin in pins:
-	GPIO.setup(pin, GPIO.OUT)
-	pwm = GPIO.PWM(pin, 100)
+for i in range(len(pins)):
+	GPIO.setup(pins[i], GPIO.OUT)
+	pwm = GPIO.PWM(pins[i], 100)
 	pwm.start(0)
-	bright.append(pwm)
+	pwms.append(pwm)
 
 
 s = socket.socket()
@@ -37,14 +37,13 @@ try:
 	while True:
 
 		conn, addr = s.accept()
-		request = conn.recv(1024)
 
-		data = parsePOSTdata(request.decode())
+		data = parsePOSTdata(conn.recv(1024).decode())
 
 		if 'led' in data and 'brightness' in data:
 			number = int(data['led'])
 			led[number] = int(data['brightness'])
-			bright[number].ChangeDutyCycle(led[number])
+			pwms[number].ChangeDutyCycle(led[number])
 
 
 		html = f"""<!DOCTYPE html>
@@ -69,7 +68,7 @@ try:
 		conn.close()
 
 except KeyboardInterrupt:
-	for pwm in bright:
+	for pwm in pwms:
 		pwm.stop()
 	GPIO.cleanup()
 
