@@ -46,6 +46,7 @@ try:
 			pwms[number].ChangeDutyCycle(led[number])
 
 
+
 		html = f"""<!DOCTYPE html>
 <html>
 <head>
@@ -128,9 +129,10 @@ try:
 		conn.close()
 
 except KeyboardInterrupt:
-	for pwm in pwms:
-		pwm.stop()
-	GPIO.cleanup()
+	for i in range(len(LED_pwm)):
+		pwms[i].stop()
+		GPIO.cleanup()
+
 
 
 
