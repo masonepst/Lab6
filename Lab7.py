@@ -2,10 +2,11 @@ import socket
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
+
 pins = [5,6,26]
 
 led = [0,0,0]
-select = 0
+number = 0
 bright = []
 
 for pin in pins:
@@ -31,6 +32,7 @@ def parsePOSTdata(data):
 		if len(key_val) == 2:
 			data_dict[key_val[0]] = key_val[1]
 	return data_dict
+
 try:
 	while True:
 
@@ -40,9 +42,9 @@ try:
 		data = parsePOSTdata(request.decode())
 
 		if 'led' in data and 'brightness' in data:
-			select = int(data['led'])
-			led[select] = int(data['brightness'])
-			bright[select].ChangeDutyCycle(led[select])
+			number = int(data['led'])
+			led[number] = int(data['brightness'])
+			bright[number].ChangeDutyCycle(led[select])
 
 
 		html = f"""<!DOCTYPE html>
@@ -50,7 +52,7 @@ try:
 	<body>
 	  <h2>Brightness level:</h2>
 	  <form method="POST">
-	    <input type="range" name="brightness" min="0" max="100" value="{led[select]}"><br><br>
+	    <input type="range" name="brightness" min="0" max="100" value="{led[number]}"><br><br>
 	    <b>Select LED:</b><br>
 	    <input type="radio" name="led" value="0" {'checked' if select == 0 else ''}> LED 1 ({led[0]}%)<br>
 	    <input type="radio" name="led" value="1" {'checked' if select == 1 else ''}> LED 2 ({led[1]}%)<br>
@@ -61,10 +63,11 @@ try:
 	</html>"""
 
 		conn.send(b"HTTP/1.1 200 OK\r\n")
-		conn.send(b"Content-Type: text/html\r\n")
+		conn.send(b"Content-Type: text/html\r\n\r\n")
 		conn.send(b"Connection: close\r\n\r\n")
 		conn.sendall(html.encode())
 		conn.close()
+
 except KeyboardInterrupt:
 	for pwm in bright:
 		pwm.stop()
