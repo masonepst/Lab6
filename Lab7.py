@@ -24,15 +24,13 @@ def parsePOSTdata(data):
 while True:
 
 	conn, addr = s.accept()
-	request = conn.recv(1024).decode()
+	request = conn.recv(1024)
 
-	method = request.split(' ')[0]
+	data = parsePOSTdata(request).decode()
 
-	if method == 'POST':
-		data = parsePOSTdata(request)
-		if 'led' in data and 'brightness' in data:
-			select = int(data['led'])
-			led[select] = int(data['brightness'])
+	if 'led' in data and 'brightness' in data:
+		select = int(data['led'])
+		led[select] = int(data['brightness'])
 
 
 	html = f"""<!DOCTYPE html>
