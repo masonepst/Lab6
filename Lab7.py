@@ -1,16 +1,16 @@
 import socket
 import RPi.GPIO as GPIO
-GPIO.cleanup()
+
 GPIO.setmode(GPIO.BCM)
-pins = [23,24,25]
+pins = [5,6,26]
 
 led = [0,0,0]
 select = 0
 bright = []
 
-for i in pins:
-	GPIO.setup(i, GPIO.OUT)
-	pwm = GPIO.PWM(i, 100)
+for pin in pins:
+	GPIO.setup(pin, GPIO.OUT)
+	pwm = GPIO.PWM(pin, 100)
 	pwm.start(0)
 	bright.append(pwm)
 
