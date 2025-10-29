@@ -63,7 +63,7 @@ try:
 	</html>"""
 
 		conn.send(b"HTTP/1.1 200 OK\r\n")
-		conn.send(b"Content-Type: text/html\r\n\r\n")
+		conn.send(b"Content-Type: text/html\r\n")
 		conn.send(b"Connection: close\r\n\r\n")
 		conn.sendall(html.encode())
 		conn.close()
