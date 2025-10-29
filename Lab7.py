@@ -29,10 +29,10 @@ while True:
 	method = request.split(' ')[0]
 
 	if method == 'POST':
-		data = parsePOSTdata(request)
-		s1 = data['led1']
-		s2 = data['led2']
-		s3 = data['led3']
+    data = parsePOSTdata(request)
+    if 'led' in data and 'brightness' in data:
+        select = int(data['led'])
+        led[select] = int(data['brightness'])
 
 		led = [s1, s2, s3]
 
