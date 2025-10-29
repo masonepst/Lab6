@@ -4,6 +4,7 @@ import socket
 led = [0,0,0]
 
 s = socket.socket()
+select = 0
 
 s.bind(('0.0.0.0', 80))
 s.listen(1)
@@ -40,9 +41,9 @@ while True:
   <form method="POST">
     <input type="range" name="brightness" min="0" max="100" value="{led[selected_led]}"><br><br>
     <b>Select LED:</b><br>
-    <input type="radio" name="led" value="0" {'checked' if selected_led == 0 else ''}> LED 1 ({led[0]}%)<br>
-    <input type="radio" name="led" value="1" {'checked' if selected_led == 1 else ''}> LED 2 ({led[1]}%)<br>
-    <input type="radio" name="led" value="2" {'checked' if selected_led == 2 else ''}> LED 3 ({led[2]}%)<br><br>
+    <input type="radio" name="led" value="0" {'checked' if select == 0 else ''}> LED 1 ({led[0]}%)<br>
+    <input type="radio" name="led" value="1" {'checked' if select == 1 else ''}> LED 2 ({led[1]}%)<br>
+    <input type="radio" name="led" value="2" {'checked' if select == 2 else ''}> LED 3 ({led[2]}%)<br><br>
     <input type="submit" value="Change Brightness">
   </form>
 </body>
