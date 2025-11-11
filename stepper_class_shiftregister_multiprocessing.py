@@ -81,7 +81,13 @@ class Stepper:
 
     # Move to an absolute angle taking the shortest possible path:
     def goAngle(self, angle):
-         pass
+         dif = angle - self.angle.multiprocessing.value
+         move = (dif + 180) % 360 - 180
+         time.sleep(0.1)
+         p = multiprocessing.Process(target=self.__rotate, args=(delta,))
+         p.start()
+
+
          # COMPLETE THIS METHOD FOR LAB 8
 
     # Set the motor zero point
