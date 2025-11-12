@@ -34,17 +34,19 @@ class Stepper:
 
     # Class attributes:
     num_steppers = 0      # track number of Steppers instantiated
-    shifter_outputs = 0   # track shift register outputs for all motors
+    shifter_outputs = multiprocessing.Value('i', 0)   # track shift register outputs for all motors
     seq = [0b0001,0b0011,0b0010,0b0110,0b0100,0b1100,0b1000,0b1001] # CCW sequence
-    delay = 3000          # delay between motor steps [us]
+    delay = 1200          # delay between motor steps [us]
     steps_per_degree = 4096/360    # 4096 steps/rev * 1/360 rev/deg
 
-    def __init__(self, shifter, lock):
+    def __init__(self, shifter, lock, newlock):
         self.s = shifter           # shift register
         self.angle = multiprocessing.Value('d', 0.0)            # current output shaft angle
         self.step_state = 0        # track position in sequence
         self.shifter_bit_start = 4*Stepper.num_steppers  # starting bit position
         self.lock = lock           # multiprocessing lock
+        self.newlock = newlock
+
 
         Stepper.num_steppers += 1   # increment the instance count
 
@@ -57,10 +59,11 @@ class Stepper:
     def __step(self, dir):
         self.step_state += dir    # increment/decrement the step
         self.step_state %= 8      # ensure result stays in [0,7]
-        bit = ~(0b1111 << self.shifter_bit_start)
-        Stepper.shifter_outputs &= bit
-        Stepper.shifter_outputs |= Stepper.seq[self.step_state] << self.shifter_bit_start
-        self.s.shiftByte(Stepper.shifter_outputs)
+        with self.newlock
+            bit = ~(0b1111 << self.shifter_bit_start)
+            Stepper.shifter_outputs &= bit
+            Stepper.shifter_outputs |= Stepper.seq[self.step_state] << self.shifter_bit_start
+            self.s.shiftByte(Stepper.shifter_outputs)
         self.angle.value += dir/Stepper.steps_per_degree
         self.angle.value %= 360         # limit to [0,359.9+] range
 
@@ -107,8 +110,8 @@ if __name__ == '__main__':
     lock2 = multiprocessing.Lock()
 
     # Instantiate 2 Steppers:
-    m1 = Stepper(s, lock1)
-    m2 = Stepper(s, lock2)
+    m1 = Stepper(s, lock1, newlock)
+    m2 = Stepper(s, lock2, newlock)
 
 
     m1.zero()
