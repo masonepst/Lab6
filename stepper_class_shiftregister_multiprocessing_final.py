@@ -61,10 +61,8 @@ class Stepper:
         Stepper.shifter_outputs &= bit
         Stepper.shifter_outputs |= Stepper.seq[self.step_state] << self.shifter_bit_start
         self.s.shiftByte(Stepper.shifter_outputs)
-        with self.angle.get_lock():
-
-            self.angle.value += dir/Stepper.steps_per_degree
-            self.angle.value %= 360         # limit to [0,359.9+] range
+        self.angle.value += dir/Stepper.steps_per_degree
+        self.angle.value %= 360         # limit to [0,359.9+] range
 
     # Move relative angle from current position:
     def __rotate(self, delta):
@@ -105,12 +103,11 @@ if __name__ == '__main__':
 
     # Use multiprocessing.Lock() to prevent motors from trying to 
     # execute multiple operations at the same time:
-    lock1 = multiprocessing.Lock()
-    lock2 = multiprocessing.Lock()
+    lock = multiprocessing.Lock()
 
     # Instantiate 2 Steppers:
-    m1 = Stepper(s, lock1)
-    m2 = Stepper(s, lock2)
+    m1 = Stepper(s, lock)
+    m2 = Stepper(s, lock)
 
 
     m1.zero()
