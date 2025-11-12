@@ -58,7 +58,7 @@ class Stepper:
         self.step_state += dir    # increment/decrement the step
         self.step_state %= 8      # ensure result stays in [0,7]
         bit = ~(0b1111 << self.shifter_bit_start)
-            with self.lock:
+        with self.lock:
             Stepper.shifter_outputs &= bit
             Stepper.shifter_outputs |= Stepper.seq[self.step_state] << self.shifter_bit_start
             self.s.shiftByte(Stepper.shifter_outputs)
