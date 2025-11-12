@@ -41,7 +41,7 @@ class Stepper:
 
     def __init__(self, shifter, lock):
         self.s = shifter           # shift register
-        self.angle = multiprocessing.Value('d',0.0)          # current output shaft angle
+        self.angle = multiprocessing.Value('d', 0.0)           # current output shaft angle
         self.step_state = 0        # track position in sequence
         self.shifter_bit_start = 4*Stepper.num_steppers  # starting bit position
         self.lock = lock           # multiprocessing lock
@@ -57,21 +57,22 @@ class Stepper:
     def __step(self, dir):
         self.step_state += dir    # increment/decrement the step
         self.step_state %= 8      # ensure result stays in [0,7]
-        bit = 0b1111 << self.shifter_bit_start
-        update_bit = Stepper.seq[self.step_state] << self.shifter_bit_start
-        with self.lock:
-            Stepper.shifter_outputs = (Stepper.shifter_outputs &~ bit) | update_bit
-            self.s.shiftByte(Stepper.shifter_outputs)
-        self.angle.value += dir/Stepper.steps_per_degree
-        self.angle.value %= 360         # limit to [0,359.9+] range
+        Stepper.shifter_outputs &= ~(0b1111 << self.shifter_bit_start)
+        Stepper.shifter_outputs |= Stepper.seq[self.step_state] << self.shifter_bit_start
+        self.s.shiftByte(Stepper.shifter_outputs)
+        with self.angle.get_lock():
+            self.angle.value += dir/Stepper.steps_per_degree
+            self.angle.value %= 360         # limit to [0,359.9+] range
 
     # Move relative angle from current position:
     def __rotate(self, delta):
+        self.lock.acquire()                 # wait until the lock is available
         numSteps = int(Stepper.steps_per_degree * abs(delta))    # find the right # of steps
         dir = self.__sgn(delta)        # find the direction (+/-1)
         for s in range(numSteps):      # take the steps
             self.__step(dir)
             time.sleep(Stepper.delay/1e6)
+        self.lock.release()
 
     # Move relative angle from current position:
     def rotate(self, delta):
@@ -81,19 +82,17 @@ class Stepper:
 
     # Move to an absolute angle taking the shortest possible path:
     def goAngle(self, angle):
-         dif = angle - self.angle.value
-         move = (dif + 180) % 360 - 180
-
-         time.sleep(0.1)
-         p = multiprocessing.Process(target=self.__rotate, args=(move,))
-         p.start()
-
-
-         # COMPLETE THIS METHOD FOR LAB 8
+        with self.angle.get_lock():
+            dif = angle - self.angle.value
+        move = (dif + 180) % 360 - 180
+        time.sleep(0.1)
+        p = multiprocessing.Process(target=self.__rotate, args=(move,))
+        p.start()
 
     # Set the motor zero point
     def zero(self):
-        self.angle.value = 0
+        with self.angle.get_lock():
+            self.angle.value = 0
 
 
 # Example use:
@@ -105,24 +104,33 @@ if __name__ == '__main__':
     # Use multiprocessing.Lock() to prevent motors from trying to 
     # execute multiple operations at the same time:
     lock = multiprocessing.Lock()
+
     # Instantiate 2 Steppers:
     m1 = Stepper(s, lock)
     m2 = Stepper(s, lock)
 
+    # Zero the motors:
     m1.zero()
     m2.zero()
-    m1.goAngle(90)
-    m1.goAngle(-45)
-    m2.goAngle(-90)
-    m2.goAngle(45)
-    m1.goAngle(-135)
-    m1.goAngle(135)
-    m1.goAngle(0)
-        # While the motors are running in their separate processes, the main
+
+    # Move as desired, with eacg step occuring as soon as the previous 
+    # step ends:
+    m1.rotate(-90)
+    m1.rotate(45)
+    m1.rotate(-90)
+    m1.rotate(45)
+
+    # If separate multiprocessing.lock objects are used, the second motor
+    # will run in parallel with the first motor:
+    m2.rotate(180)
+    m2.rotate(-45)
+    m2.rotate(45)
+    m2.rotate(-90)
+ 
+    # While the motors are running in their separate processes, the main
     # code can continue doing its thing: 
     try:
         while True:
             pass
     except:
         print('\nend')
-
