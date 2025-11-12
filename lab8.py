@@ -58,10 +58,9 @@ class Stepper:
         self.step_state += dir    # increment/decrement the step
         self.step_state %= 8      # ensure result stays in [0,7]
         bit = ~(0b1111 << self.shifter_bit_start)
-        with self.lock:
-            Stepper.shifter_outputs &= bit
-            Stepper.shifter_outputs |= Stepper.seq[self.step_state] << self.shifter_bit_start
-            self.s.shiftByte(Stepper.shifter_outputs)
+        Stepper.shifter_outputs &= bit
+        Stepper.shifter_outputs |= Stepper.seq[self.step_state] << self.shifter_bit_start
+        self.s.shiftByte(Stepper.shifter_outputs)
         self.angle.value += dir/Stepper.steps_per_degree
         self.angle.value %= 360         # limit to [0,359.9+] range
 
@@ -113,6 +112,8 @@ if __name__ == '__main__':
 
     m1.zero()
     m2.zero()
+    m1.rotate(-90)
+    m2.rotate(90)
     m1.goAngle(90)
     m1.goAngle(-45)
     m2.goAngle(-90)
