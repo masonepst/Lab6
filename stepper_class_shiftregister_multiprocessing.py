@@ -36,6 +36,7 @@ class Stepper:
     num_steppers = 0      # track number of Steppers instantiated
     shifter_outputs = 0   # track shift register outputs for all motors
     seq = [0b0001,0b0011,0b0010,0b0110,0b0100,0b1100,0b1000,0b1001] # CCW sequence
+    lock = multiprocessing.Lock()
     delay = 1200          # delay between motor steps [us]
     steps_per_degree = 4096/360    # 4096 steps/rev * 1/360 rev/deg
 
@@ -57,9 +58,11 @@ class Stepper:
     def __step(self, dir):
         self.step_state += dir    # increment/decrement the step
         self.step_state %= 8      # ensure result stays in [0,7]
-        Stepper.shifter_outputs &= ~(0b1111 << self.shifter_bit_start)
-        Stepper.shifter_outputs |= Stepper.seq[self.step_state] << self.shifter_bit_start
-        self.s.shiftByte(Stepper.shifter_outputs)
+        with Stepper.shifter_lock:
+            
+            Stepper.shifter_outputs &= ~(0b1111 << self.shifter_bit_start)
+            Stepper.shifter_outputs |= Stepper.seq[self.step_state] << self.shifter_bit_start
+            self.s.shiftByte(Stepper.shifter_outputs)
         with self.angle.get_lock():
             self.angle.value += dir/Stepper.steps_per_degree
             self.angle.value %= 360         # limit to [0,359.9+] range
