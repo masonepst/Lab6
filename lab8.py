@@ -106,6 +106,7 @@ if __name__ == '__main__':
 
     # Use multiprocessing.Lock() to prevent motors from trying to 
     # execute multiple operations at the same time:
+    newlock = multiprocessing.Lock()
     lock1 = multiprocessing.Lock()
     lock2 = multiprocessing.Lock()
 
