@@ -63,5 +63,5 @@ try:
         conn.sendall(html.encode())
         conn.close()
 
-    except KeyboardInterrupt:
-        print("KeyboardInterrupt")
+except KeyboardInterrupt:
+    print("KeyboardInterrupt")
