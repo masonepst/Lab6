@@ -1,7 +1,7 @@
 import json
 import requests
 
-url = "http://localhost:8000/turret_test.json"
+url = "http://masone.local:8000/turret_test.json"
 
 response = requests.get(url)
 
@@ -17,8 +17,8 @@ if "globes" in data:
 else:
 	globes = []
 
-for turret_id, coords in turrets.items():
+for stud_id, coords in turrets.items():
     r = coords["r"]
     theta = coords["theta"]
-    print(f"Turret {turret_id}: r = {r} cm, theta = {theta} rad")
+    print(f"Turret {stud_id}: r = {r} cm, theta = {theta} rad")
 
