@@ -1,7 +1,7 @@
 import json
 import requests
 
-# url = URL for JSON file of turret and globe coordinates
+url = "http://localhost:8000/turret_test.json"
 
 response = requests.get(url)
 
