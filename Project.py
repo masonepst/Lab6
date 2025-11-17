@@ -17,7 +17,7 @@ if "globes" in data:
 else:
 	globes = []
 
-for stud_id, coords in turrets.items():
+for stud_id, coords in turrets.items(): #items needed if turrets is a dict {}
     r = coords["r"]
     theta = coords["theta"]
     print(f"{stud_id}: r = {r} cm, theta = {theta} rad")
@@ -26,4 +26,5 @@ for coords in globes.items():
 	r = coords["r"]
 	theta = coords["theta"]
 	z = coords["z"]
+	print(f"Globe: r = {r} cm, theta = {theta} rad, z = {z} cm")
 
