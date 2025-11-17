@@ -20,5 +20,10 @@ else:
 for stud_id, coords in turrets.items():
     r = coords["r"]
     theta = coords["theta"]
-    print(f"Turret {stud_id}: r = {r} cm, theta = {theta} rad")
+    print(f"{stud_id}: r = {r} cm, theta = {theta} rad")
+
+for coords in globes.items():
+	r = coords["r"]
+	theta = coords["theta"]
+	z = coords["z"]
 
