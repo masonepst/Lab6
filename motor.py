@@ -50,9 +50,9 @@ try:
   <h2>Laser Control</h2>
   <form method="POST">
     <label>Motor 1 Angle:</label><br>
-    <input type="range" name="angle1" min="0" max="360" value="{motor1}"><br><br>
+    <input type="range" name="motor1" min="0" max="360" value="{motor1}"><br><br>
     <label>Motor 2 Angle:</label><br>
-    <input type="range" name="angle2" min="0" max="360" value="{motor2}"><br><br>
+    <input type="range" name="motor2" min="0" max="360" value="{motor2}"><br><br>
     <input type="submit" value="Move Laser">
   </form>
 </body>
