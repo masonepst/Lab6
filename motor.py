@@ -62,3 +62,6 @@ try:
         conn.send(b"Connection: close\r\n\r\n")
         conn.sendall(html.encode())
         conn.close()
+
+    except KeyboardInterrupt:
+        print("KeyboardInterrupt")
