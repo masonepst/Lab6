@@ -1,7 +1,7 @@
 import json
 import requests
 
-url = "http://masone.local:8000/turret_test.json"
+url = "http://192.168.1.254:8000/positions.json "
 
 response = requests.get(url)
 
