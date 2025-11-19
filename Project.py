@@ -5,6 +5,9 @@ url = "http://192.168.1.254:8000/positions.json "
 
 response = requests.get(url)
 
+print("STATUS:", response.status_code)
+print("RAW RESPONSE:", response.text)
+
 data = response.json()
 
 if "turrets" in data:
