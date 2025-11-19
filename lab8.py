@@ -115,7 +115,7 @@ if __name__ == '__main__':
 
 
     m1.zero()
-    ms.goAngle(0)
+    m2.goAngle(0)
     m2.goAngle(90)
     m2.goAngle(-100)
  
