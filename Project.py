@@ -25,6 +25,6 @@ for stud_id, coords in turrets.items(): #items needed if turrets is a dict {}
 for coords in globes:
 	r = coords["r"]
 	theta = coords["theta"]
-	h = coords["h"]
-	print(f"Globe: r = {r} cm, theta = {theta} rad, h = {h} cm")
+	h = coords["z"]
+	print(f"Globe: r = {r} cm, theta = {theta} rad, z = {z} cm")
 
