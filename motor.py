@@ -1,6 +1,10 @@
 import socket
 import multiprocessing
 from lab8 import Stepper, Shifter
+import RPi.GPIO as GPIO
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(25,GPIO.OUT)
 
 s = Shifter(data=16,latch=20,clock=21)
 
@@ -41,20 +45,40 @@ try:
         if 'motor1' in data and 'motor2' in data:
             motor1 = float(data['motor1'])
             motor2 = float(data['motor2'])
-            m1.goAngle(motor1)
+            m1.goAngle(motor1) # Use rotate if goAngle doesnt work
             m2.goAngle(motor2)
 
-        html = f"""<!DOCTYPE html>
+        if "laser" in data:
+            if data["laser"] == "on":
+                GPIO.output(25, GPIO.HIGH)
+            else:
+                GPIO.output(25, GPIO.LOW)
+
+ html = f"""<!DOCTYPE html>
 <html>
 <body>
   <h2>Laser Control</h2>
+
   <form method="POST">
     <label>Motor 1 Angle:</label><br>
-    <input type="range" name="motor1" min="0" max="360" value="{motor1}"><br><br>
+    <input type="range" name="motor1" min="0" max="360" value="{motor1}">
+    <br><br>
+
     <label>Motor 2 Angle:</label><br>
-    <input type="range" name="motor2" min="0" max="360" value="{motor2}"><br><br>
+    <input type="range" name="motor2" min="0" max="360" value="{motor2}">
+    <br><br>
+
     <input type="submit" value="Move Laser">
   </form>
+
+  <hr>
+
+  <h3>Laser Power</h3>
+  <form method="POST">
+    <button name="laser" value="on" style="width:120px;height:40px;">Turn ON</button>
+    <button name="laser" value="off" style="width:120px;height:40px;">Turn OFF</button>
+  </form>
+
 </body>
 </html>"""
         conn.send(b"HTTP/1.1 200 OK\r\n")
