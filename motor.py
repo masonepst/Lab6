@@ -54,7 +54,7 @@ try:
             else:
                 GPIO.output(25, GPIO.LOW)
 
- html = f"""<!DOCTYPE html>
+        html = f"""<!DOCTYPE html>
 <html>
 <body>
   <h2>Laser Control</h2>
