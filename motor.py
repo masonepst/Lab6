@@ -39,16 +39,11 @@ try:
         conn, addr = s.accept()
         data = parsePOSTdata(conn.recv(1024).decode())
 
-        motor1 = 0
-        motor2 = 0
 
         if 'motor1' in data and 'motor2' in data:
             motor1 = float(data['motor1'])
             motor2 = float(data['motor2'])
-        if m1.busy.value == 0:
             m1.goAngle(motor1)
-
-        if m2.busy.value == 0:
             m2.goAngle(motor2)
 
 
