@@ -1,100 +1,83 @@
-# stepper_class_shiftregister_multiprocessing.py
-#
-# Stepper class
-#
-# Because only one motor action is allowed at a time, multithreading could be
-# used instead of multiprocessing. However, the GIL makes the motor process run 
-# too slowly on the Pi Zero, so multiprocessing is needed.
-
 import time
 import multiprocessing
-from shifter import Shifter   # our custom Shifter class
+from shifter import Shifter
+
 
 class Stepper:
-    """
-    Supports operation of an arbitrary number of stepper motors using
-    one or more shift registers.
-  
-    A class attribute (shifter_outputs) keeps track of all
-    shift register output values for all motors.  In addition to
-    simplifying sequential control of multiple motors, this schema also
-    makes simultaneous operation of multiple motors possible.
-   
-    Motor instantiation sequence is inverted from the shift register outputs.
-    For example, in the case of 2 motors, the 2nd motor must be connected
-    with the first set of shift register outputs (Qa-Qd), and the 1st motor
-    with the second set of outputs (Qe-Qh). This is because the MSB of
-    the register is associated with Qa, and the LSB with Qh (look at the code
-    to see why this makes sense).
- 
-    An instance attribute (shifter_bit_start) tracks the bit position
-    in the shift register where the 4 control bits for each motor
-    begin.
-    """
-
-    # Class attributes:
-    num_steppers = 0      # track number of Steppers instantiated
-    shifter_outputs = multiprocessing.Value('i', 0)   # track shift register outputs for all motors
-    seq = [0b0001,0b0011,0b0010,0b0110,0b0100,0b1100,0b1000,0b1001] # CCW sequence
-    delay = 1200          # delay between motor steps [us]
-    steps_per_degree = 4096/360    # 4096 steps/rev * 1/360 rev/deg
+    num_steppers = 0
+    shifter_outputs = multiprocessing.Value('i', 0)
+    seq = [0b0001,0b0011,0b0010,0b0110,0b0100,0b1100,0b1000,0b1001]
+    delay = 1200
+    steps_per_degree = 4096/360
 
     def __init__(self, shifter, lock, newlock):
-        self.s = shifter           # shift register
-        self.angle = multiprocessing.Value('d', 0.0)            # current output shaft angle
-        self.step_state = 0        # track position in sequence
-        self.shifter_bit_start = 4*Stepper.num_steppers  # starting bit position
-        self.lock = lock           # multiprocessing lock
+        self.s = shifter
+        self.angle = multiprocessing.Value('d', 0.0)     # shared angle
+        self.step_state = multiprocessing.Value('i', 0)  # shared step index
+        self.busy = multiprocessing.Value('b', 0)        # 1 if rotating
+
+        self.shifter_bit_start = 4 * Stepper.num_steppers
+        self.lock = lock
         self.newlock = newlock
 
-        Stepper.num_steppers += 1   # increment the instance count
+        Stepper.num_steppers += 1
 
-    # Signum function:
     def __sgn(self, x):
-        if x == 0: return(0)
-        else: return(int(abs(x)/x))
+        if x == 0:
+            return 0
+        return 1 if x > 0 else -1
 
-    # Move a single +/-1 step in the motor sequence:
-    def __step(self, dir):
-        self.step_state += dir    # increment/decrement the step
-        self.step_state %= 8      # ensure result stays in [0,7]
+    def __step(self, dir, angle, step_state):
+        step_state.value = (step_state.value + dir) % 8
+
         with self.newlock:
-            bit = ~(0b1111 << self.shifter_bit_start)
-            Stepper.shifter_outputs.value &= bit
-            Stepper.shifter_outputs.value |= Stepper.seq[self.step_state] << self.shifter_bit_start
+            mask = ~(0b1111 << self.shifter_bit_start)
+            Stepper.shifter_outputs.value &= mask
+            Stepper.shifter_outputs.value |= Stepper.seq[step_state.value] << self.shifter_bit_start
             self.s.shiftByte(Stepper.shifter_outputs.value)
-        self.angle.value += dir/Stepper.steps_per_degree
-        self.angle.value %= 360         # limit to [0,359.9+] range
 
-    # Move relative angle from current position:
-    def __rotate(self, delta):
-        self.lock.acquire()                 # wait until the lock is available
-        numSteps = int(Stepper.steps_per_degree * abs(delta))    # find the right # of steps
-        dir = self.__sgn(delta)        # find the direction (+/-1)
-        for s in range(numSteps):      # take the steps
-            self.__step(dir)
-            time.sleep(Stepper.delay/1e6)
-        self.lock.release()
+        angle.value = (angle.value + dir / Stepper.steps_per_degree) % 360
 
-    # Move relative angle from current position:
+    def __rotate(self, delta, angle, step_state, busy_flag):
+        with self.lock:
+            busy_flag.value = 1
+
+            numSteps = int(abs(delta) * Stepper.steps_per_degree)
+            direction = self.__sgn(delta)
+
+            for _ in range(numSteps):
+                self.__step(direction, angle, step_state)
+                time.sleep(Stepper.delay / 1e6)
+
+            busy_flag.value = 0
+
     def rotate(self, delta):
-        time.sleep(0.1)
-        p = multiprocessing.Process(target=self.__rotate, args=(delta,))
+        if self.busy.value == 1:
+            return
+
+        p = multiprocessing.Process(
+            target=self.__rotate,
+            args=(delta, self.angle, self.step_state, self.busy)
+        )
         p.start()
 
-    # Move to an absolute angle taking the shortest possible path:
     def goAngle(self, angle):
-        dif = angle - self.angle.value
-        move = (dif + 180) % 360 - 180
-        time.sleep(0.1)
-        p = multiprocessing.Process(target=self.__rotate, args=(move,))
+        if self.busy.value == 1:
+            return
+
+        diff = angle - self.angle.value
+        move = (diff + 180) % 360 - 180
+
+        p = multiprocessing.Process(
+            target=self.__rotate,
+            args=(move, self.angle, self.step_state, self.busy)
+        )
         p.start()
 
-         # COMPLETE THIS METHOD FOR LAB 8
-
-    # Set the motor zero point
     def zero(self):
         self.angle.value = 0
+        self.step_state.value = 0
+
 
 
 # Example use:
