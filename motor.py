@@ -1,6 +1,6 @@
 import socket
 import multiprocessing
-from lab8 import Stepper, Shifter
+from rotate import Stepper, Shifter
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
@@ -44,8 +44,8 @@ try:
         if 'motor1' in data and 'motor2' in data:
             motor1 = float(data['motor1'])
             motor2 = float(data['motor2'])
-            m1.goAngle(motor1)
-            m2.goAngle(motor2)
+            m1.rotate(motor1)
+            m2.rotate(motor2)
 
 
         if "laser" in data:
