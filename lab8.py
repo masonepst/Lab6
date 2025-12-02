@@ -62,10 +62,11 @@ class Stepper:
         p.start()
 
     def goAngle(self, angle):
-    # Calculate shortest rotation delta
+        if self.busy.value:
+            return
         delta = ((angle - self.angle.value + 180) % 360) - 180
-    # Use the non-blocking rotate method so both motors can move simultaneously
         self.rotate(delta)
+
 
 
     def zero(self):
