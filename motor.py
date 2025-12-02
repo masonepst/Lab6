@@ -1,6 +1,6 @@
 import socket
 import multiprocessing
-from rotate import Stepper, Shifter
+from lab8 import Stepper, Shifter
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
