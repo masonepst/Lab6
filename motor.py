@@ -41,11 +41,10 @@ try:
         data = parsePOSTdata(conn.recv(1024).decode())
 
 
-        if 'motor1' in data:
+        if 'motor1' in data and 'motor2' in data:
             motor1 = float(data['motor1'])
-            m1.goAngle(motor1)
-        if 'motor2' in data:
             motor2 = float(data['motor2'])
+            m1.goAngle(motor1)
             m2.goAngle(motor2)
 
 
@@ -69,11 +68,11 @@ try:
 
   <form method="POST">
     <label>Motor 1 Angle:</label><br>
-    <input type="number" name="motor1" min="0" max="360" value="{motor1}" step="1">
+    <input type="range" name="motor1" min="0" max="360" value="{motor1}">
     <br><br>
 
     <label>Motor 2 Angle:</label><br>
-    <input type="number" name="motor2" min="0" max="360" value="{motor2}" step="1">
+    <input type="range" name="motor2" min="0" max="360" value="{motor2}">
     <br><br>
 
     <input type="submit" value="Move Laser">
@@ -88,8 +87,7 @@ try:
   </form>
 
 </body>
-</html>
-"""
+</html>"""
         conn.send(b"HTTP/1.1 200 OK\r\n")
         conn.send(b"Content-Type: text/html\r\n")
         conn.send(b"Connection: close\r\n\r\n")

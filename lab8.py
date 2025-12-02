@@ -62,8 +62,17 @@ class Stepper:
         p.start()
 
     def goAngle(self, angle):
-        delta = ((angle - self.angle.value + 180) % 360) - 180
-        self.__rotate(delta, self.angle, self.step_state, self.busy)
+        if self.busy.value == 1:
+            return
+
+        diff = angle - self.angle.value
+        move = (diff + 180) % 360 - 180
+
+        p = multiprocessing.Process(
+            target=self.__rotate,
+            args=(move, self.angle, self.step_state, self.busy)
+        )
+        p.start()
 
     def zero(self):
         self.angle.value = 0
