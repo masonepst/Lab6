@@ -17,7 +17,8 @@ m2 = Stepper(s, lock2, newlock)
 
 m1.zero()
 m2.zero()
-
+motor1 = 0
+motor2 = 0
 
 s = socket.socket()
 s.bind(('0.0.0.0', 8080))
