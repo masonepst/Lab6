@@ -45,14 +45,25 @@ try:
         if 'motor1' in data and 'motor2' in data:
             motor1 = float(data['motor1'])
             motor2 = float(data['motor2'])
-            m1.goAngle(motor1) # Use rotate if goAngle doesnt work
+        if m1.busy.value == 0:
+            m1.goAngle(motor1)
+
+        if m2.busy.value == 0:
             m2.goAngle(motor2)
+
 
         if "laser" in data:
             if data["laser"] == "on":
                 GPIO.output(25, GPIO.HIGH)
             else:
                 GPIO.output(25, GPIO.LOW)
+
+        print("M1 angle before move:", m1.angle.value)
+        print("Requested:", motor1)
+        print("M2 angle before move:", m2.angle.value)
+        print("Requested:", motor2)
+
+
 
         html = f"""<!DOCTYPE html>
 <html>
