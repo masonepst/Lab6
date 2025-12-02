@@ -43,12 +43,10 @@ try:
 
         if 'motor1' in data:
             motor1 = float(data['motor1'])
-        if not m1.busy.value:
             m1.goAngle(motor1)
 
         if 'motor2' in data:
             motor2 = float(data['motor2'])
-        if not m2.busy.value:
             m2.goAngle(motor2)
 
 
