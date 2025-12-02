@@ -37,7 +37,7 @@ def parsePOSTdata(data):
 
 try:
     while True:
-        conn, addr = s.accept()
+        conn, addr = sock.accept()
         data = parsePOSTdata(conn.recv(1024).decode())
 
 
