@@ -40,7 +40,7 @@ def parsePOSTdata(data):
 turrets, globes = JSON_pull()
 distance = my_turret_distances(turrets, globes)
 
-for stud_id, (dist_r, dist_theta) in dist_turrets.items():
+for stud_id, (dist_r, dist_theta) in turrets.items():
     print(f"turret {stud_id}: delta r = {dist_r:.2f}, delta theta = {dist_theta:.2f} degrees")
 
 try:
