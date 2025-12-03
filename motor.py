@@ -2,6 +2,8 @@ import socket
 import multiprocessing
 from lab8 import Stepper, Shifter
 import RPi.GPIO as GPIO
+from Project import JSON_pull
+from Project import my_turret_distances
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(25,GPIO.OUT)
@@ -35,6 +37,12 @@ def parsePOSTdata(data):
             data_dict[key_val[0]] = key_val[1]
     return data_dict
 
+turrets, globes = JSON_pull()
+distance = my_turret_distances(turrets, globes)
+
+for stud_id, (dist_r, dist_theta) in dist_turrets.items():
+    print(f"turret {stud_id}: delta r = {dist_r:.2f}, delta theta = {dist_theta:.2f} degrees")
+
 try:
     while True:
         conn, addr = sock.accept()
@@ -43,7 +51,7 @@ try:
 
         if 'motor1' in data:
             motor1 = float(data['motor1'])
-            m1.goAngle(motor1)
+            m1.goAngle(motor1) #motor 1 and 2 value will be calculated based on the distances of turrets and globes
 
         if 'motor2' in data:
             motor2 = float(data['motor2'])
@@ -56,12 +64,6 @@ try:
                 GPIO.output(25, GPIO.HIGH)
             else:
                 GPIO.output(25, GPIO.LOW)
-
-       # print("M1 angle before move:", m1.angle.value)
-        #print("Requested:", motor1)
-        #print("M2 angle before move:", m2.angle.value)
-        #print("Requested:", motor2)
-
 
 
         html = f"""<!DOCTYPE html>
