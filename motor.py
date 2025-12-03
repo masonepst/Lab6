@@ -41,7 +41,10 @@ turrets, globes = JSON_pull()
 distance = my_turret_distances(turrets, globes)
 
 for stud_id, (dist_r, dist_theta) in turrets.items():
-    print(f"turret {stud_id}: delta r = {dist_r:.2f}, delta theta = {dist_theta:.2f} degrees")
+    print(f"turret {stud_id}: delta r = {float(dist_r):.2f}, delta theta = {float(dist_theta):.2f} degrees")
+
+for (dist_r, dist_theta, dist_z) in globes.items():
+    print(f"delta r = {float(dist_r):.2f}, delta theta = {float(dist_theta):.2f} degrees, delta z = {float(dist_z):.2f}")
 
 try:
     while True:

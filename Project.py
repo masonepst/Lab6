@@ -44,16 +44,16 @@ def my_turret_distances(turrets, globes):
 		if stud_id == str(7):
 			continue
 
-		r = coords["r"]
-		theta = coords["theta"]
+		r = float(coords["r"])
+		theta = float(coords["theta"])
 		dist_r = r - my_r
 		dist_theta = theta - my_theta
 		dist_turrets[stud_id] = (dist_r, dist_theta)
 
 	for coords in globes:
-		r = coords["r"]
-		theta = coords["theta"]
-		z = coords["z"]
+		r = float(coords["r"])
+		theta = float(coords["theta"])
+		z = float(coords["z"])
 		dist_r = r - my_r
 		dist_theta = theta - my_theta
 		dist_z = z - my_z
