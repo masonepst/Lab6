@@ -56,7 +56,7 @@ def my_turret_distances(turrets, globes):
 		dist_r = r - my_r
 		dist_theta = theta - my_theta
 		dist_z = z
-		dist_globes.append(dist_r, dist_theta, dist_z)
+		dist_globes.append((dist_r, dist_theta, dist_z))
 
 	return dist_globes, dist_turrets
 
