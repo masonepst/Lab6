@@ -67,7 +67,7 @@ while True:
             motor2 = 0
             m2.goAngle(motor2) #This should be at point where laser is facing down towards other turrets. No need for z actuation
             GPIO.output(25, GPIO.HIGH)
-            time.sleep(1000)
+            time.sleep(2)
 
         for (dist_r, dist_theta, dist_z) in dist_globes:
             GPIO.output(25,GPIO.LOW)
@@ -76,7 +76,7 @@ while True:
             m1.goAngle(motor1)
             m2.goAngle(motor2)
             GPIO.output(25, GPIO.HIGH)
-            time.sleep(1000)
+            time.sleep(2)
 
         GPIO.output(25,GPIO.LOW)
         print("Done")
