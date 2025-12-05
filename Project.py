@@ -47,7 +47,7 @@ def my_turret_distances(turrets, globes):
 		r = float(coords["r"])
 		theta = float(coords["theta"])
 		dist_r = r - my_r
-		dist_theta = theta - my_theta
+		dist_theta = 57.29578*(theta - my_theta)
 		dist_turrets[stud_id] = (dist_r, dist_theta)
 
 	for coords in globes:

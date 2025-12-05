@@ -3,6 +3,7 @@ import multiprocessing
 from lab8 import Stepper, Shifter
 import RPi.GPIO as GPIO
 from Project import JSON_pull
+import math
 from Project import my_turret_distances
 
 GPIO.setmode(GPIO.BCM)
@@ -44,64 +45,68 @@ for stud_id, (dist_r, dist_theta) in dist_turrets.items():
     print(f"turret {stud_id}: delta r = {dist_r:.2f}, delta theta = {dist_theta:.2f} degrees")
 
 for (dist_r, dist_theta, dist_z) in dist_globes:
+
     print(f"delta r = {dist_r:.2f}, delta theta = {dist_theta:.2f} degrees, delta z = {dist_z:.2f}")
 
-try:
-    while True:
-        conn, addr = sock.accept()
-        data = parsePOSTdata(conn.recv(1024).decode())
+while True:
+    conn, addr = sock.accept()
+    data = parsePOSTdata(conn.recv(1024).decode())
 
+    if "start" in data:
+        print("starting")
 
-        if 'motor1' in data:
-            motor1 = float(data['motor1'])
-            m1.goAngle(motor1) #motor 1 and 2 value will be calculated based on the distances of turrets and globes
+    # motor1 is bottom and motor 2 is laser
+        for stud_id, (dist_r, dist_theta) in dist_turrets.items():
+            GPIO.output(25,GPIO.LOW)
+            m1.goAngle(dist_theta)
+            m2.goAngle(0) #This should be at point where laser is facing down towards other turrets. No need for z actuation
+            GPIO.output(25, GPIO.HIGH)
 
-        if 'motor2' in data:
-            motor2 = float(data['motor2'])
+        for (dist_r, dist_theta, dist_z) in dist_globes:
+            GPIO.output(25,GPIO.LOW)
+            motor2 = math.degrees(math.atan2(dist_z, dist_r))
+            m1.goAngle(dist_theta)
             m2.goAngle(motor2)
+            GPIO.output(25, GPIO.HIGH)
+
+        GPIO.output(25,GPIO.LOW)
+        print("Done")
+
+
+    #if 'motor1' in data:
+     #   motor1 = float(data['motor1'])
+     #   m1.goAngle(motor1) #motor 1 and 2 value will be calculated based on the distances of turrets and globes
+
+    #if 'motor2' in data:
+    #    motor2 = float(data['motor2'])
+    #    m2.goAngle(motor2)
 
 
 
-        if "laser" in data:
-            if data["laser"] == "on":
-                GPIO.output(25, GPIO.HIGH)
-            else:
-                GPIO.output(25, GPIO.LOW)
+    #if "laser" in data:
+     #   if data["laser"] == "on":
+      #      GPIO.output(25, GPIO.HIGH)
+       # else:
+        #    GPIO.output(25, GPIO.LOW)
 
 
-        html = f"""<!DOCTYPE html>
+    html = f"""<!DOCTYPE html>
 <html>
 <body>
-  <h2>Laser Control</h2>
+  <h2>Laser Turret Control</h2>
 
   <form method="POST">
-    <label>Motor 1 Angle:</label><br>
-    <input type="number" name="motor1" min="0" max="360" value="{motor1}" step="1">
-    <br><br>
-
-    <label>Motor 2 Angle:</label><br>
-    <input type="number" name="motor2" min="0" max="360" value="{motor2}" step="1">
-    <br><br>
-
-    <input type="submit" value="Move Laser">
-  </form>
-
-  <hr>
-
-  <h3>Laser Power</h3>
-  <form method="POST">
-    <button name="laser" value="on" style="width:120px;height:40px;">Turn ON</button>
-    <button name="laser" value="off" style="width:120px;height:40px;">Turn OFF</button>
+    <button name="start" value="go" style="width:160px;height:50px;font-size:18px;">
+      START SWEEP
+    </button>
   </form>
 
 </body>
 </html>
 """
-        conn.send(b"HTTP/1.1 200 OK\r\n")
-        conn.send(b"Content-Type: text/html\r\n")
-        conn.send(b"Connection: close\r\n\r\n")
-        conn.sendall(html.encode())
-        conn.close()
+    conn.send(b"HTTP/1.1 200 OK\r\n")
+    conn.send(b"Content-Type: text/html\r\n")
+    conn.send(b"Connection: close\r\n\r\n")
+    conn.sendall(html.encode())
+    conn.close()
 
-except KeyboardInterrupt:
-    print("KeyboardInterrupt")
