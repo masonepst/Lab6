@@ -63,9 +63,9 @@ while True:
         for stud_id, (dist_r, dist_theta) in dist_turrets.items():
             if stud_id == str("7"):
                 continue
-                
-            time.sleep(2)
+
             GPIO.output(25,GPIO.LOW)
+            time.sleep(2)
             motor1 = dist_theta
             m1.goAngle(motor1)
             motor2 = 0
@@ -74,8 +74,8 @@ while True:
             time.sleep(2)
 
         for (dist_r, dist_theta, dist_z) in dist_globes:
-            time.sleep(2)
             GPIO.output(25,GPIO.LOW)
+            time.sleep(2)
             motor2 = math.degrees(math.atan2(dist_z, dist_r))
             motor1 = dist_theta
             m1.goAngle(motor1)
