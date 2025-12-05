@@ -55,19 +55,27 @@ while True:
     if "start" in data:
         print("starting")
 
+        motor1 = 0
+        motor2 = 0
+
     # motor1 is bottom and motor 2 is laser
         for stud_id, (dist_r, dist_theta) in dist_turrets.items():
             GPIO.output(25,GPIO.LOW)
-            m1.goAngle(dist_theta)
-            m2.goAngle(0) #This should be at point where laser is facing down towards other turrets. No need for z actuation
+            motor1 = dist_theta
+            m1.goAngle(motor1)
+            motor2 = 0
+            m2.goAngle(motor2) #This should be at point where laser is facing down towards other turrets. No need for z actuation
             GPIO.output(25, GPIO.HIGH)
+            delay(1000)
 
         for (dist_r, dist_theta, dist_z) in dist_globes:
             GPIO.output(25,GPIO.LOW)
             motor2 = math.degrees(math.atan2(dist_z, dist_r))
-            m1.goAngle(dist_theta)
+            motor1 = dist_theta
+            m1.goAngle(motor1)
             m2.goAngle(motor2)
             GPIO.output(25, GPIO.HIGH)
+            delay(1000)
 
         GPIO.output(25,GPIO.LOW)
         print("Done")
