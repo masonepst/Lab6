@@ -3,7 +3,7 @@ import requests
 
 def JSON_pull():
 
-	url = "http://192.168.1.254:8000/positions.json" #Actual url "http://192.168.1.254:8000/positions.json"
+	url = "http://172.20.10.3/positions.json" #Actual url "http://192.168.1.254:8000/positions.json"
 	response = requests.get(url)
 
 	data = response.json()
