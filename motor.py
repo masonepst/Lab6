@@ -79,7 +79,7 @@ while True:
         <p><b>Targeting Turret {stud_id}</b><br>
         r = {dist_r:.2f}, θ = {dist_theta:.2f}<br>
         Motor1 → {motor1:.2f}°, Motor2 → {motor2:.2f}°<br>
-        Laser: {laser_state}
+        Laser: {laser}
         </p>
         """
             delay(2)
@@ -101,7 +101,7 @@ while True:
         <p><b>Targeting Globe</b><br>
         r = {dist_r:.2f}, θ = {dist_theta:.2f}, z = {dist_z:.2f}<br>
         Motor1 → {motor1:.2f}°, Motor2 → {motor2:.2f}°<br>
-        Laser: {laser_state}
+        Laser: {laser}
         </p>
         """
             delay(2)
