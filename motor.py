@@ -147,7 +147,7 @@ while True:
 
   <h2>Status</h2>
   <div style="font-size:18px;">
-    {status_text}
+    {status}
   </div>
 
 </body>
