@@ -23,6 +23,7 @@ m1.zero()
 m2.zero()
 motor1 = 0
 motor2 = 0
+status = ""
 
 sock = socket.socket()
 sock.bind(('0.0.0.0', 8080))
@@ -53,11 +54,14 @@ while True:
     conn, addr = sock.accept()
     data = parsePOSTdata(conn.recv(1024).decode())
 
+    laser = "OFF"
+
     if "start" in data:
         print("starting")
 
         motor1 = 0
         motor2 = 0
+        status += "<h3>Starting Sweep...</h3>"
 
     # motor1 is bottom and motor 2 is laser
         for stud_id, (dist_r, dist_theta) in dist_turrets.items():
@@ -65,27 +69,51 @@ while True:
                 continue
 
             GPIO.output(25,GPIO.LOW)
+            laser = "OFF"
             time.sleep(2)
             motor1 = dist_theta
             m1.goAngle(motor1)
             motor2 = 0
             m2.goAngle(motor2) #This should be at point where laser is facing down towards other turrets. No need for z actuation
+            status += f"""
+        <p><b>Targeting Turret {stud_id}</b><br>
+        r = {dist_r:.2f}, θ = {dist_theta:.2f}<br>
+        Motor1 → {motor1:.2f}°, Motor2 → {motor2:.2f}°<br>
+        Laser: {laser_state}
+        </p>
+        """
             delay(2)
             GPIO.output(25, GPIO.HIGH)
+            laser = "ON"
             time.sleep(2)
+
+            
 
         for (dist_r, dist_theta, dist_z) in dist_globes:
             GPIO.output(25,GPIO.LOW)
+            laser = "OFF"
             time.sleep(2)
             motor2 = math.degrees(math.atan2(dist_z, dist_r))
             motor1 = dist_theta
             m1.goAngle(motor1)
             m2.goAngle(motor2)
+            status += f"""
+        <p><b>Targeting Globe</b><br>
+        r = {dist_r:.2f}, θ = {dist_theta:.2f}, z = {dist_z:.2f}<br>
+        Motor1 → {motor1:.2f}°, Motor2 → {motor2:.2f}°<br>
+        Laser: {laser_state}
+        </p>
+        """
             delay(2)
             GPIO.output(25, GPIO.HIGH)
+            laser = "ON"
             time.sleep(2)
 
+            
+
         GPIO.output(25,GPIO.LOW)
+        laser -"OFF"
+        status += "<h3>Done</h3>"
         print("Done")
 
 
