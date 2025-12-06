@@ -145,9 +145,15 @@ while True:
     </button>
   </form>
 
+  <h2>Status</h2>
+  <div style="font-size:18px;">
+    {status_text}
+  </div>
+
 </body>
 </html>
 """
+
     conn.send(b"HTTP/1.1 200 OK\r\n")
     conn.send(b"Content-Type: text/html\r\n")
     conn.send(b"Connection: close\r\n\r\n")
