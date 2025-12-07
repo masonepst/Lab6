@@ -112,7 +112,7 @@ while True:
             
 
         GPIO.output(25,GPIO.LOW)
-        laser -"OFF"
+        laser ="OFF"
         status += "<h3>Done</h3>"
         print("Done")
 
